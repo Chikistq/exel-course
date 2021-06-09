@@ -10,7 +10,10 @@
     "linebreak-style": "off",
     "require-jsdoc": "off",
     "arrow-parens": "off",
-    "new-cap": "off"
+    "new-cap": "off",
+    "comma-dangle": "off",
+    "operator-linebreak": "off"
+    //    "indent": [2, 4]
   },
   "extends": ["eslint:recommended", "google"]
 }
