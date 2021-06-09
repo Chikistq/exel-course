@@ -17,11 +17,17 @@ export class DomListener {
         throw new Error(`Метод ${method} не задан в Компоненте - ${name}`)
       }
       // console.log(method)
-      this.$root.on(listener, this[method].bind(this))
+      this[method] = this[method].bind(this)
+      this.$root.on(listener, this[method])
+      return method
     })
   }
   removeDOMListeners() {
-
+    this.listeners.forEach(listener =>{
+      const method = getMethodName(listener)
+      this.$root.off(listener, this[method])
+      console.log(`listener ${method} - deleted`)
+    })
   }
 }
 
