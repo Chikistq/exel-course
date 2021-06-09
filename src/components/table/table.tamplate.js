@@ -1,15 +1,14 @@
-import {debug} from 'webpack';
 
 const CODE = {
   A: 65,
   Z: 90
 }
 
-// function createCell() {
-//   return `
-//     <div class="cell" contenteditable>s</div>
-//     `
-// }
+function toCell(el) {
+  return `
+    <div class="cell" contenteditable>${el}</div>
+    `
+}
 
 function toColumn(el) {
   return `
@@ -17,10 +16,10 @@ function toColumn(el) {
     `
 }
 
-function createRow(content) {
+function createRow(number = '', content) {
   return `
     <div class="row">  
-      <div class="row-info"></div>
+      <div class="row-info">${number}</div>
       <div class="row-data">${content}</div>
     </div>
   `
@@ -31,17 +30,22 @@ function toChar(_, index) {
 }
 
 export function createTable(rowsCount = '15') {
-  const colsCount = CODE.Z - CODE.A
+  const colsCount = CODE.Z - CODE.A +1
   const cols = new Array(colsCount)
       .fill('')
       .map(toChar)
       .map(toColumn)
       .join('')
 
+  const cell = new Array(colsCount)
+      .fill('')
+      .map(toCell)
+      .join('')
+
   const rows = []
-  rows.push(createRow(cols))
+  rows.push(createRow('', cols))
   for (let i = 0; i < rowsCount; i++) {
-    rows.push(createRow())
+    rows.push(createRow(i+1, cell))
   }
   return rows.join('')
 }
