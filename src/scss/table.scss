@@ -24,6 +24,7 @@
     border: 1px solid $border-color;
     background: #f8f9fa;
     border-top: 0;
+    position: relative;
   }
   .row-data{
     display: flex;
@@ -39,6 +40,7 @@
     height: 100%;
     border-top: 0;
     border-left: 0;
+    position: relative;
   }
   .cell{
     min-width: 40px;
@@ -54,8 +56,36 @@
 
     &.selected{
       border: none;
-      outline: 2px solid #3c74ff;
+      outline: 2px solid $primary-color;
       z-index: 2;
+    }
+  }
+  .col-resize, .row-resize{
+    bottom: 0;
+    position: absolute;
+    opacity: 0;
+    background-color: $primary-color;
+    right: 0;
+    transition: all ease-out .2s;
+
+    &:hover{
+      opacity: 1;
+    }
+  }
+  .col-resize{
+    top: 0;
+    width: 4px;
+
+    &:hover{
+      cursor: col-resize;
+    }
+  }
+  .row-resize{
+    left: 0;
+    height: 4px;
+
+    &:hover{
+      cursor: row-resize;
     }
   }
 }
