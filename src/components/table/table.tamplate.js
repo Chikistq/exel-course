@@ -4,22 +4,29 @@ const CODE = {
   Z: 90
 }
 
-function toCell(el) {
-  return `
-    <div class="cell" contenteditable>${el}</div>
-    `
+function toCell(el, index) {
+  return `<div class="cell" data-col="${index}" contenteditable>${el}</div>`
 }
-
-function toColumn(el) {
+function toColumn(el, index) {
   return `
-    <div class="collum">${el}</div>
+    <div class="collum" data-type="resizable" data-col="${index}">
+        ${el}
+        <div class="col-resize" data-resize="col"></div>
+    </div>
     `
 }
 
 function createRow(number = '', content) {
+  const resizer = number
+        ? `<div class="row-resize" data-resize="row"></div>`
+        : ''
+
   return `
-    <div class="row">  
-      <div class="row-info">${number}</div>
+    <div class="row" data-type="resizable"">  
+      <div class="row-info">
+        ${number}
+        ${resizer}
+      </div>
       <div class="row-data">${content}</div>
     </div>
   `
