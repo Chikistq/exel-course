@@ -22,7 +22,7 @@ function createRow(number = '', content) {
         : ''
 
   return `
-    <div class="row">  
+    <div class="row" data-type="resizable"">  
       <div class="row-info">
         ${number}
         ${resizer}

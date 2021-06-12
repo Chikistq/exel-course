@@ -45,8 +45,18 @@ class Dom {
     return this.$el.dataset
   }
 
+  findAll(selector) {
+    return this.$el.querySelectorAll(selector)
+  }
+
   getCoords() {
     return this.$el.getBoundingClientRect()
+  }
+
+  css(style = {}) {
+    Object
+        .keys(style)
+        .forEach(key => this.$el.style[key] = style[key])
   }
 }
 
