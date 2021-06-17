@@ -4,9 +4,18 @@ const CODE = {
   Z: 90
 }
 
-function toCell(el, index) {
-  return `<div class="cell" data-col="${index}" contenteditable>${el}</div>`
+function toCell(rowNumber) {
+  return function(_, colNumber) {
+    return `
+   <div class="cell" 
+   data-col="${colNumber}" 
+   data-id="${rowNumber}:${colNumber}" 
+   data-type="cell"
+   contenteditable>
+   </div>`
+  }
 }
+
 function toColumn(el, index) {
   return `
     <div class="collum" data-type="resizable" data-col="${index}">
@@ -44,15 +53,17 @@ export function createTable(rowsCount = '15') {
       .map(toColumn)
       .join('')
 
-  const cell = new Array(colsCount)
-      .fill('')
-      .map(toCell)
-      .join('')
 
   const rows = []
-  rows.push(createRow('', cols))
-  for (let i = 0; i < rowsCount; i++) {
-    rows.push(createRow(i+1, cell))
+  rows.push(createRow(null, cols))
+  for (let row = 0; row < rowsCount; row++) {
+    // debugger
+    const cell = new Array(colsCount)
+        .fill('')
+        .map(toCell(row))
+        .join('')
+
+    rows.push(createRow(row+1, cell))
   }
   return rows.join('')
 }
