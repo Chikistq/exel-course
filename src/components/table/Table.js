@@ -1,12 +1,12 @@
-import {ExcelComponent} from '@core/ExcelComponent';
-import {createTable} from '@/components/table/table.tamplate';
-import {ResizeHandler} from '@/components/table/tabl-resize';
-import {TableSelection} from '@/components/table/TableSelection';
-import {isCell, matrix, nextSelection} from '@/components/table/tableFunction';
-import {$} from '@core/dom';
+import {ExcelComponent} from '@core/ExcelComponent'
+import {$} from '@core/dom'
+import {createTable} from '@/components/table/table.template'
+import {resizeHandler} from '@/components/table/table.resize'
+import {isCell, matrix, nextSelector, shouldResize} from './table.functions'
+import {TableSelection} from '@/components/table/TableSelection'
 
 export class Table extends ExcelComponent {
-  static ClassName = `excel__table`
+  static className = 'excel__table'
 
   constructor($root, options) {
     super($root, {
@@ -16,23 +16,29 @@ export class Table extends ExcelComponent {
     })
   }
 
-
   toHTML() {
     return createTable(20)
   }
+
   prepare() {
     this.selection = new TableSelection()
   }
 
   init() {
     super.init()
-    this.selectCell(this.$root.find('[data-id = "0:0"]'))
+
+    this.selectCell(this.$root.find('[data-id="0:0"]'))
 
     this.$on('formula:input', text => {
       this.selection.current.text(text)
     })
+
     this.$on('formula:done', () => {
       this.selection.current.focus()
+    })
+
+    this.$subscribe(state => {
+      console.log('TableState', state)
     })
   }
 
@@ -41,22 +47,26 @@ export class Table extends ExcelComponent {
     this.$emit('table:select', $cell)
   }
 
+  async resizeTable(event) {
+    try {
+      const data = await resizeHandler(this.$root, event)
+      this.$dispatch({type: 'TABLE_RESIZE', data})
+    } catch (e) {
+      console.warn('Resize error', e.message)
+    }
+  }
 
   onMousedown(event) {
-    if (event.target.dataset.resize) {
-      ResizeHandler(this.$root, event)
+    if (shouldResize(event)) {
+      this.resizeTable(event)
     } else if (isCell(event)) {
       const $target = $(event.target)
       if (event.shiftKey) {
-        const target = $target.id(true)
-        const current = this.selection.current.id(true)
-
-        const $cells = matrix(target, current)
+        const $cells = matrix($target, this.selection.current)
             .map(id => this.$root.find(`[data-id="${id}"]`))
-
         this.selection.selectGroup($cells)
       } else {
-        this.selection.select($target)
+        this.selectCell($target)
       }
     }
   }
@@ -64,19 +74,19 @@ export class Table extends ExcelComponent {
   onKeydown(event) {
     const keys = [
       'Enter',
-      'ArrowUp',
-      'ArrowDown',
+      'Tab',
       'ArrowLeft',
       'ArrowRight',
-      'Tab',
+      'ArrowDown',
+      'ArrowUp'
     ]
+
     const {key} = event
+
     if (keys.includes(key) && !event.shiftKey) {
       event.preventDefault()
-
       const id = this.selection.current.id(true)
-
-      const $next = this.$root.find(nextSelection(key, id))
+      const $next = this.$root.find(nextSelector(key, id))
       this.selectCell($next)
     }
   }
@@ -85,4 +95,3 @@ export class Table extends ExcelComponent {
     this.$emit('table:input', $(event.target))
   }
 }
-
